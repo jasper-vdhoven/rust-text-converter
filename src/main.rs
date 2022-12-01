@@ -1,4 +1,22 @@
 use std::{io,env, process::exit};
+fn convert_to_leetspeak(input_string:&String) -> String {
+    let mut converted_string:String = String::from("");
+    // iterate over the chars in the input string variable and substitute where necessary
+    for chars in input_string.chars() {
+        match chars {
+            'a' | 'A' => converted_string.push('4'),
+            'b' | 'B' => converted_string.push('8'),
+            'e' | 'E' => converted_string.push('3'),
+            'g' | 'G' => converted_string.push('9'),
+            'i' | 'I' => converted_string.push('1'),
+            'o' | 'O' => converted_string.push('0'),
+            's' | 'S' => converted_string.push('5'),
+            't' | 'T' => converted_string.push('7'),
+            _ => converted_string.push(chars)
+        }
+    }
+    return converted_string;
+}
 
 fn main() -> io::Result<()> {
     let args: Vec<String> = env::args().collect();
