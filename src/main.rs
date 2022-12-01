@@ -1,4 +1,9 @@
-use std::{io,env, process::exit};
+use std::{io,env,process::exit, borrow::Cow, vec};
+use convert_case::{Case, Casing};
+use emojis::Emoji;
+use node_emoji::Replacer;
+use unicode_segmentation::UnicodeSegmentation;
+
 fn convert_to_leetspeak(input_string:&String) -> String {
     let mut converted_string:String = String::from("");
     // iterate over the chars in the input string variable and substitute where necessary
@@ -60,6 +65,7 @@ fn decode_emojis_to_shortcode(input_string:&String) -> Option<Vec<String>> {
 fn main() -> io::Result<()> {
     let args: Vec<String> = env::args().collect();
 
+    // Check for correct amount of arguments present
     if args.len() != 3 {
         print!("Usage: rust-text-converter [argument] [input string]");
         exit(1)
@@ -74,15 +80,26 @@ fn main() -> io::Result<()> {
             "-l" | "--lower" => println!("{}", src_test.to_lowercase()),
             "-a" | "--alt" => println!("{}", src_test.to_case(Case::Alternating)),
             "-i" | "--invalt" => println!("Printing to iNvErTeD aLtErNaTiVe cAsE"),
-            "-r" | "--random" => println!("Printing to ranDOM CAsE"),
-            "-s" | "--leet" => println!("Printing to l337$p34k"),
-            "-g" | "--angry" => println!("Printing to Angry. Case."),
-            "-t" | "--trueangry" => println!("Printing to REALLY. ANGRY. CASE."),
+            "-r" | "--random" => println!("{}", src_test.to_case(Case::Random)),
+            "-s" | "--leet" => println!("{}", convert_to_leetspeak(src_test)),
+            "-g" | "--angry" => println!("{}", src_test.to_case(Case::Title).replace(' ', ".")),
+            "-t" | "--trueangry" => println!("{}", src_test.to_uppercase().replace(' ', ".")),
+            "-v" | "--reverse" => println!("{}", src_test.chars().rev().collect::<String>()),
+            "-e" | "--emoji" => println!("{}", convert_shortcodes_to_emojis(src_test)),
+            "-d" | "--decode" => {
+                let emoji_vec: Option<Vec<String>> = decode_emojis_to_shortcode(src_test);
+                for items in emoji_vec.iter().flatten() {
+                    println!("{}", items);
+                }
+            }
+            "-f" | "--emojicase" => {
+                let emoji_vec: Vec<String> = emoji_case(src_test);
+                for items in emoji_vec.iter() {
+                    println!("{}", items)
+                }
+            }
             _ => println!("Invalid case type: {}", set_case)
         }
-    
-        println!("Case setting: {}", set_case);
-        println!("Text to transform: {}", src_test);
         Ok(())
     }
 }
