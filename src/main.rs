@@ -13,9 +13,9 @@ fn main() -> io::Result<()> {
         let src_test = &args[2];
     
         match set_case.as_str() {
-            "-c" | "--caps" => println!("Printing to UPPER CASE"),
-            "-l" | "--lower" => println!("Printing to lower case"),
-            "-a" | "--alt" => println!("Printing to AlTeRnAtiVe CaSe"),
+            "-c" | "--caps" => println!("{}", src_test.to_uppercase()),
+            "-l" | "--lower" => println!("{}", src_test.to_lowercase()),
+            "-a" | "--alt" => println!("{}", src_test.to_case(Case::Alternating)),
             "-i" | "--invalt" => println!("Printing to iNvErTeD aLtErNaTiVe cAsE"),
             "-r" | "--random" => println!("Printing to ranDOM CAsE"),
             "-s" | "--leet" => println!("Printing to l337$p34k"),
