@@ -1,7 +1,7 @@
 use std::{io,env,process::exit, borrow::Cow, vec};
 use convert_case::{Case, Casing};
 use emojis::Emoji;
-use node_emoji::Replacer;
+use gh_emoji::Replacer;
 use unicode_segmentation::UnicodeSegmentation;
 
 fn convert_to_leetspeak(input_string:&String) -> String {
@@ -25,8 +25,8 @@ fn convert_to_leetspeak(input_string:&String) -> String {
 
 fn convert_shortcodes_to_emojis(input_string:&String) -> Cow<str> {
     // Takes a shortcode :smile: and converts it into the equivalent emoji
-    // Use node_emoji::Replacer to search through a string for all matches in one go
-    let replacer: Replacer = node_emoji::Replacer::new();
+    // Use gh_emoji::Replacer to search through a string for all matches in one go
+    let replacer: Replacer = gh_emoji::Replacer::new();
     let converted_string: Cow<str> = replacer.replace_all(input_string);
 
     return converted_string;
@@ -38,7 +38,7 @@ fn emoji_case(input_string:&String) -> Vec<String> {
     // takes a string and substitutes words -> emojis where possible
     // dog -> dog emoji | ocean -> ocean emoji
     for words in input_string.to_lowercase().split(" ").collect::<Vec<_>>() {
-        let emoji_char = node_emoji::get(words);
+        let emoji_char = gh_emoji::get(words);
         // If the entered emoji string is invalid, push the original value to the vec
         if emoji_char.is_none() {
             emoji_array.push(words.to_string());

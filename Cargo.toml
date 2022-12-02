@@ -9,5 +9,5 @@ license = "MIT"
 [dependencies]
 convert_case =  {version = "0.6.0", features = ["random"]}
 emojis = "0.5.2"
-node-emoji = "1.0.7"
+gh-emoji = "1.0.7"
 unicode-segmentation = "1.10.0"
