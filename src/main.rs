@@ -1,11 +1,11 @@
-use std::{io,env,process::exit, borrow::Cow, vec};
 use convert_case::{Case, Casing};
 use emojis::Emoji;
 use gh_emoji::Replacer;
+use std::{borrow::Cow, env, io, process::exit, vec};
 use unicode_segmentation::UnicodeSegmentation;
 
-fn convert_to_leetspeak(input_string:&String) -> String {
-    let mut converted_string:String = String::from("");
+fn convert_to_leetspeak(input_string: &String) -> String {
+    let mut converted_string: String = String::from("");
     // iterate over the chars in the input string variable and substitute where necessary
     for chars in input_string.chars() {
         match chars {
@@ -17,13 +17,13 @@ fn convert_to_leetspeak(input_string:&String) -> String {
             'o' | 'O' => converted_string.push('0'),
             's' | 'S' => converted_string.push('5'),
             't' | 'T' => converted_string.push('7'),
-            _ => converted_string.push(chars)
+            _ => converted_string.push(chars),
         }
     }
     return converted_string;
 }
 
-fn convert_shortcodes_to_emojis(input_string:&String) -> Cow<str> {
+fn convert_shortcodes_to_emojis(input_string: &String) -> Cow<str> {
     // Takes a shortcode :smile: and converts it into the equivalent emoji
     // Use gh_emoji::Replacer to search through a string for all matches in one go
     let replacer: Replacer = gh_emoji::Replacer::new();
@@ -32,7 +32,7 @@ fn convert_shortcodes_to_emojis(input_string:&String) -> Cow<str> {
     return converted_string;
 }
 
-fn emoji_case(input_string:&String) -> Vec<String> {
+fn emoji_case(input_string: &String) -> Vec<String> {
     let mut emoji_array: Vec<String> = vec![];
 
     // takes a string and substitutes words -> emojis where possible
@@ -51,8 +51,8 @@ fn emoji_case(input_string:&String) -> Vec<String> {
     return emoji_array;
 }
 
-fn decode_emojis_to_shortcode(input_string:&String) -> Option<Vec<String>> {
-    let mut emoji_arary: Vec<String> = vec![]; 
+fn decode_emojis_to_shortcode(input_string: &String) -> Option<Vec<String>> {
+    let mut emoji_arary: Vec<String> = vec![];
     // Convert emoji input into short code, this is only for a single emoji (I think)
     for emoji in input_string.graphemes(false) {
         let emoji_char: &Emoji = emojis::get(emoji)?;
@@ -69,12 +69,11 @@ fn main() -> io::Result<()> {
     if args.len() != 3 {
         print!("Usage: rust-text-converter [argument] [input string]");
         exit(1)
-    } 
-    else {
+    } else {
         println!("Rust Text Converter\n");
         let set_case = &args[1];
         let src_test = &args[2];
-    
+
         match set_case.as_str() {
             "-c" | "--caps" => println!("{}", src_test.to_uppercase()),
             "-l" | "--lower" => println!("{}", src_test.to_lowercase()),
@@ -98,7 +97,7 @@ fn main() -> io::Result<()> {
                     println!("{}", items)
                 }
             }
-            _ => println!("Invalid case type: {}", set_case)
+            _ => println!("Invalid case type: {}", set_case),
         }
         Ok(())
     }
