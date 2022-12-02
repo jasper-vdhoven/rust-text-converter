@@ -23,6 +23,7 @@ fn convert_to_leetspeak(input_string: &String) -> String {
     return converted_string;
 }
 
+// TODO: check why this won't print certain emojis, such as melting_face
 fn convert_shortcodes_to_emojis(input_string: &String) -> Cow<str> {
     // Takes a shortcode :smile: and converts it into the equivalent emoji
     // Use gh_emoji::Replacer to search through a string for all matches in one go
