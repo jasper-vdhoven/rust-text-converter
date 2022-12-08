@@ -8,6 +8,7 @@ use std::{io,env,process::exit, borrow::Cow, vec};
 use convert_case::{Case, Casing};
 use emojis::Emoji;
 use node_emoji::Replacer;
+use std::{borrow::Cow, vec};
 use unicode_segmentation::UnicodeSegmentation;
 
 // Struct with the form structure that will be sent by the front-end
@@ -91,11 +92,38 @@ async fn index() -> Option<NamedFile> {
     NamedFile::open("static/index.html").await.ok()
 }
 
+fn state_selector(case: &String, input_text: &String) -> String {
+    println!("input text:   {}", input_text);
+    println!("case:         {}", case);
+
+    let mut converted_text: String = String::from("");
+
+    match case.as_ref() {
+        "uppercase" => converted_text.push_str(&input_text.to_uppercase()),
+        "lowercase" => converted_text.push_str(&input_text.to_lowercase()),
+        "alternative-case" => converted_text.push_str(&input_text.to_case(Case::Alternating)),
+        "random-case" => converted_text.push_str(&input_text.to_case(Case::Random)),
+        "leet-case" => converted_text.push_str(&convert_to_leetspeak(&input_text)),
+        "angry-case" => converted_text.push_str(&input_text.to_case(Case::Title).replace(" ", ".")),
+        "true-angry-case" => converted_text.push_str(&input_text.to_uppercase().replace(" ", ".")),
+        "reverse-case" => converted_text.push_str(&input_text.chars().rev().collect::<String>()),
+        "convert-shortcode-to-emoji" => {
+            converted_text.push_str(&convert_shortcodes_to_emojis(&input_text))
+        }
+        "convert-emoji-to-shortcode" => {
+            converted_text.push_str(decode_emojis_to_shortcode(&input_text).as_deref().unwrap())
+        }
+        "emoji-case" => converted_text.push_str(&emoji_case(&input_text)),
+        _ => converted_text.push_str("Invalid case"),
+    }
+    converted_text
+}
+
 #[launch]
 fn rocket() -> _ {
     rocket::build()
-    .mount("/", routes![index])
-    .mount("/", FileServer::from(relative!("static")))
+        .mount("/", routes![index, api])
+        .mount("/", FileServer::from(relative!("static")))
 }
 
 // fn main() -> io::Result<()> {
