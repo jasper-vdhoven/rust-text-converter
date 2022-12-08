@@ -1,136 +1,145 @@
 html {
-    background-color: #282a36;
-    color: #f8f8f2;
-    font-family: sans-serif;
-  }
-  
+  background-color: #282a36;
+  color: #f8f8f2;
+  font-family: sans-serif;
+}
+
+textarea {
+  background-color: #44475a;
+  color: #f8f8f2;
+  margin-bottom: 1vh;
+  font-family: monospace;
+}
+
+@media screen and (min-width: 35em) {
   textarea {
-    background-color: #44475a;
-    color: #f8f8f2;
-    margin-bottom: 1vh;
-    font-family: monospace;
+    width: 40vw;
   }
-  
-  @media screen and (min-width:  35em) {
-    textarea {
-      width: 40vw;
-    }
+}
+
+@media screen and (max-width: 34em) {
+  form {
+    max-width: 100%;
   }
-  
-  @media screen and (max-width: 34em)  {
-    form {
-      max-width:100%;
-    }
-  
-    textarea {
-      width: -webkit-fill-available;
-      width: -moz-available;
-    }
+
+  textarea {
+    width: -webkit-fill-available;
+    width: -moz-available;
   }
-  
-  body {
-    min-height: 100vh;
-    margin: 0;
-    padding: 0;
-  }
-  
-  header {
-    display: flex;
-    justify-content: center;
-    min-height: 1em;
-    background-color: #44475a;
-  }
-  
-  body {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  article {
-    flex: 1;
-    margin-left: 2vw;
-    margin-right: 2vw;
-  }
-  
-  h1 {
-    font-size: 2em;
-  }
-  
-  h3 {
-    font-size: 1.4em;
-  }
-  
-  textarea:focus {
-    outline: none !important;
-    border:1px solid #bd93f9;
-  }
-  
-  button:focus {
-    outline: none !important;
-    border:1px solid #bd93f9;
-  }
-  
-  footer {
-    min-height: 1em;
-    display: flex;
-    justify-content: center;
-    margin-top: 2em;
-    background-color: #44475a;
-  }
-  
-  .action-button {
-    font-size: 1.2em;
-    width: 8em;
-    height: 2em;
-    background-color: #44475a;
-    color: #f8f8f2;
-    border-color: #44475a;
-  }
-  
-  .action-button:hover {
-    color: #f8f8f2;
-    background-color: #bd93f9;
-    transition-duration: 300ms;
-  }
-  
-  A:link {
-    color: #f8f8f2;
-  }
-  
-  .tooltip {
-      position: relative;
-      display: inline-block;
-    }
-    
-    .tooltip .tooltiptext {
-      visibility: hidden;
-      width: 140px;
-      background-color: #555;
-      color: #fff;
-      text-align: center;
-      border-radius: 6px;
-      padding: 5px;
-      position: absolute;
-      z-index: 1;
-      bottom: 150%;
-      left: 50%;
-      margin-left: -75px;
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-    
-    .tooltip .tooltiptext::after {
-      content: "";
-      position: absolute;
-      top: 100%;
-      left: 50%;
-      margin-left: -5px;
-      border-width: 5px;
-      border-style: solid;
-      border-color: #555 transparent transparent transparent;
-    }
-    
-    .tooltip:hover .tooltiptext {
-      visibility: visible;
-      opacity: 1;
-    }
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  display: flex;
+  justify-content: center;
+  min-height: 1em;
+  background-color: #44475a;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+article {
+  flex: 1;
+  margin-left: 2vw;
+  margin-right: 2vw;
+}
+
+h1 {
+  font-size: 2em;
+  margin: 0.3em;
+}
+
+h3 {
+  font-size: 1.4em;
+}
+
+textarea:focus {
+  outline: none !important;
+  border: 1px solid #bd93f9;
+}
+
+button:focus {
+  outline: none !important;
+  border: 1px solid #bd93f9;
+}
+
+footer {
+  min-height: 1em;
+  display: flex;
+  justify-content: center;
+  margin-top: 2em;
+  background-color: #44475a;
+}
+
+input [type="radio"] {
+  accent-color: auto;
+}
+
+.action-button {
+  font-size: 1.2em;
+  width: 8em;
+  height: 2em;
+  background-color: #44475a;
+  color: #f8f8f2;
+  border-color: #44475a;
+}
+
+.action-button:hover {
+  color: #f8f8f2;
+  background-color: #bd93f9;
+  transition-duration: 220ms;
+}
+
+a {
+  color: #f8f8f2;
+}
+
+a:visited {
+  color: #f8f8f2;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 140px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 150%;
+  left: 50%;
+  margin-left: -75px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #555 transparent transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
