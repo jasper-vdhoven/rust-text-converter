@@ -1,4 +1,5 @@
-#[macro_use] extern crate rocket;
+#[macro_use]
+extern crate rocket;
 
 use rocket::form::Form;
 use rocket::fs::{relative, FileServer, NamedFile};
@@ -29,13 +30,13 @@ fn convert_to_leetspeak(input_string: &String) -> String {
             'o' | 'O' => converted_string.push('0'),
             's' | 'S' => converted_string.push('5'),
             't' | 'T' => converted_string.push('7'),
-            _ => converted_string.push(chars)
+            _ => converted_string.push(chars),
         }
     }
     return converted_string;
 }
 
-fn convert_shortcodes_to_emojis(input_string:&String) -> Cow<str> {
+fn convert_shortcodes_to_emojis(input_string: &String) -> Cow<str> {
     // Takes a shortcode :smile: and converts it into the equivalent emoji
     // Use node_emoji::Replacer to search through a string for all matches in one go
     let replacer: Replacer = node_emoji::Replacer::new();
