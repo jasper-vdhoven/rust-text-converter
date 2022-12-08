@@ -64,8 +64,8 @@ fn emoji_case(input_string: &String) -> String {
     return emoji_array.into_iter().collect::<String>();
 }
 
-fn decode_emojis_to_shortcode(input_string:&String) -> Option<Vec<String>> {
-    let mut emoji_arary: Vec<String> = vec![]; 
+fn decode_emojis_to_shortcode(input_string: &String) -> Option<String> {
+    let mut emoji_arary: Vec<String> = vec![];
     // Convert emoji input into short code, this is only for a single emoji (I think)
     for emoji in input_string.graphemes(false) {
         let emoji_char: &Emoji = emojis::get(emoji)?;
