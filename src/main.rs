@@ -44,7 +44,7 @@ fn convert_shortcodes_to_emojis(input_string:&String) -> Cow<str> {
     return converted_string;
 }
 
-fn emoji_case(input_string:&String) -> Vec<String> {
+fn emoji_case(input_string: &String) -> String {
     let mut emoji_array: Vec<String> = vec![];
 
     // takes a string and substitutes words -> emojis where possible
@@ -53,14 +53,15 @@ fn emoji_case(input_string:&String) -> Vec<String> {
         let emoji_char = node_emoji::get(words);
         // If the entered emoji string is invalid, push the original value to the vec
         if emoji_char.is_none() {
-            emoji_array.push(words.to_string());
+            emoji_array.push(words.to_string() + " ");
         }
         // Else, pus the translated emoji equivalent to the vec
         else {
-            emoji_array.push(emoji_char.unwrap().to_string());
+            emoji_array.push(emoji_char.unwrap().to_string() + " ");
         }
     }
-    return emoji_array;
+    // return these shitty vecs as a string to make life easier
+    return emoji_array.into_iter().collect::<String>();
 }
 
 fn decode_emojis_to_shortcode(input_string:&String) -> Option<Vec<String>> {
