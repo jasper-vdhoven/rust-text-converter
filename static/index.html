@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="main.css" />
+    <title>Rust(y) text converter</title>
+  </head>
+
+  <body>
+    <header>
+      <h1>Rusty text converter</h1>
+    </header>
+    <article>
+      <h3>Enter text to convert below and click on Convert</h3>
+      <form action="/api/convert" method="post" id="form">
+        <textarea
+          name="inputbox"
+          id="text-box-input"
+          cols="30"
+          rows="10"
+          value="inputbox"
+          required
+        ></textarea>
+        <br />
+        <label title="UPPER CASE">
+          <input type="radio" name="format" value="uppercase" />
+          "UPPER CASE"
+        </label>
+        <br />
+        <label title="lower case">
+          <input type="radio" name="format" value="lowercase" />
+          "lower case"
+        </label>
+        <br />
+        <label title="alternative case">
+          <input type="radio" name="format" value="alternative-case" />
+          "AlTeRnAtIvE CaSe"
+        </label>
+        <br />
+        <label title="random case">
+          <input type="radio" name="format" value="random-case" />
+          "RaNDOm CasE"
+        </label>
+        <br />
+        <label title="leet-case">
+          <input type="radio" name="format" value="leet-case" />
+          "1337 C453"
+        </label>
+        <br />
+        <label title="angry-case">
+          <input type="radio" name="format" value="angry-case" />
+          "Angry.Case."
+        </label>
+        <br />
+        <label title="true-angry-case">
+          <input type="radio" name="format" value="true-angry-case" />
+          "TRUE.ANGRY.CASE"
+        </label>
+        <br />
+        <label title="reverse-case">
+          <input type="radio" name="format" value="reverse-case" />
+          "esac esrever"
+        </label>
+        <br />
+        <label title="convert-to-emoji">
+          <input
+            type="radio"
+            name="format"
+            value="convert-shortcode-to-emoji"
+          />
+          "Emoji shortcode to emoji"
+        </label>
+        <br />
+        <label title="emoji-decoder">
+          <input
+            type="radio"
+            name="format"
+            value="convert-emoji-to-shortcode"
+          />
+          "Decode emoji to shortcode"
+        </label>
+        <br />
+        <label title="emoji-case">
+          <input type="radio" name="format" value="emoji-case" />
+          "Emoji case"
+        </label>
+        <br />
+        <br />
+        <input type="submit" class="action-button" value="Convert" />
+        <br />
+      </form>
+      <br />
+      <span id="resultbox">
+        <hr />
+        <h3>Your results</h3>
+        <textarea
+          name="output"
+          id="output-box"
+          cols="30"
+          rows="10"
+          required
+        ></textarea>
+        <br />
+        <span class="tooltip">
+          <button
+            class="action-button"
+            onclick="copyClipboard()"
+            onmouseout="outFunc()"
+          >
+            <span class="tooltiptext" id="clipTooltip">
+              "Copy result to clipboard" ::after
+            </span>
+            Copy result
+          </button>
+        </span>
+      </span>
+    </article>
+    <footer class="footer">
+      <p>Made with ❤️ and <a href="http://rust-lang.org">Rust</a> for Mark</p>
+    </footer>
+    <script>
+      onFormSubmit = function (event) {
+        event.preventDefault();
+
+        var form = document.forms["form"];
+        var formData =
+          "input_string=" +
+          encodeURIComponent(form["inputbox"].value) +
+          "&format=" +
+          encodeURIComponent(form["format"].value);
+        console.log(formData);
+        var xhr = new XMLHttpRequest();
+
+        xhr.onreadystatechange = function (event) {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            var resultbox = document.getElementById("output-box");
+            resultbox.style.display = "block";
+            resultbox.style.visibility = "visible";
+
+            document.getElementById("output-box").value = xhr.responseText;
+          } else if (xhr.readyState === 4) {
+            alert(xhr.responseText);
+          }
+        };
+
+        xhr.open("POST", "http://127.0.0.1:8000/api/convert");
+        xhr.setRequestHeader(
+          "Content-Type",
+          "application/x-www-form-urlencoded"
+        );
+        xhr.send(formData);
+      };
+
+      window.onload = function () {
+        document.getElementById("form").onsubmit = onFormSubmit;
+      };
+
+      function copyClipboard() {
+        var copyText = document.getElementById("output-box");
+        copyText.select();
+        copyText.setSelectionRange(0, 99999);
+        document.execCommand("copy");
+
+        var tooltip = document.getElementById("myTooltip");
+        tooltip.innerHTML = "Copied the text";
+      }
+
+      function outFunc() {
+        var tooltip = document.getElementById("clipTooltip");
+        tooltip.innerHTML = "Copy to clipboard";
+      }
+    </script>
+  </body>
+</html>

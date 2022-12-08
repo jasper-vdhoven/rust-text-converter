@@ -1,8 +1,21 @@
+#[macro_use]
+extern crate rocket;
+
+use rocket::form::Form;
+use rocket::fs::{relative, FileServer, NamedFile};
+
 use convert_case::{Case, Casing};
 use emojis::Emoji;
-use gh_emoji::Replacer;
-use std::{borrow::Cow, env, io, process::exit, vec};
+use node_emoji::Replacer;
+use std::{borrow::Cow, vec};
 use unicode_segmentation::UnicodeSegmentation;
+
+// Struct with the form structure that will be sent by the front-end
+#[derive(Debug, FromForm)]
+struct InputText<'r> {
+    pub input_string: &'r str,
+    pub format: String,
+}
 
 fn convert_to_leetspeak(input_string: &String) -> String {
     let mut converted_string: String = String::from("");
@@ -33,7 +46,7 @@ fn convert_shortcodes_to_emojis(input_string: &String) -> Cow<str> {
     return converted_string;
 }
 
-fn emoji_case(input_string: &String) -> Vec<String> {
+fn emoji_case(input_string: &String) -> String {
     let mut emoji_array: Vec<String> = vec![];
 
     // takes a string and substitutes words -> emojis where possible
@@ -42,64 +55,73 @@ fn emoji_case(input_string: &String) -> Vec<String> {
         let emoji_char = gh_emoji::get(words);
         // If the entered emoji string is invalid, push the original value to the vec
         if emoji_char.is_none() {
-            emoji_array.push(words.to_string());
+            emoji_array.push(words.to_string() + " ");
         }
         // Else, pus the translated emoji equivalent to the vec
         else {
-            emoji_array.push(emoji_char.unwrap().to_string());
+            emoji_array.push(emoji_char.unwrap().to_string() + " ");
         }
     }
-    return emoji_array;
+    // return these shitty vecs as a string to make life easier
+    return emoji_array.into_iter().collect::<String>();
 }
 
-fn decode_emojis_to_shortcode(input_string: &String) -> Option<Vec<String>> {
+fn decode_emojis_to_shortcode(input_string: &String) -> Option<String> {
     let mut emoji_arary: Vec<String> = vec![];
     // Convert emoji input into short code, this is only for a single emoji (I think)
     for emoji in input_string.graphemes(false) {
         let emoji_char: &Emoji = emojis::get(emoji)?;
         emoji_arary.push(format!(":{}:", emoji_char.name().to_string()));
     }
-
-    return Some(emoji_arary);
+    // return these shitty vecs as a string to make life easier
+    return Some(emoji_arary.into_iter().collect::<String>());
 }
 
-fn main() -> io::Result<()> {
-    let args: Vec<String> = env::args().collect();
+#[post("/api/convert", data = "<form>")]
+async fn api(form: Form<InputText<'_>>) -> String {
+    let input_text: String = form.input_string.to_string();
+    let selected_case: String = form.format.to_owned().to_string();
 
-    // Check for correct amount of arguments present
-    if args.len() != 3 {
-        print!("Usage: rust-text-converter [argument] [input string]");
-        exit(1)
-    } else {
-        println!("Rust Text Converter\n");
-        let set_case = &args[1];
-        let src_test = &args[2];
+    let converted_text: String = state_selector(&selected_case, &input_text);
+    println!("Converted text: {}", converted_text);
+    converted_text
+}
 
-        match set_case.as_str() {
-            "-c" | "--caps" => println!("{}", src_test.to_uppercase()),
-            "-l" | "--lower" => println!("{}", src_test.to_lowercase()),
-            "-a" | "--alt" => println!("{}", src_test.to_case(Case::Alternating)),
-            "-i" | "--invalt" => println!("Printing to iNvErTeD aLtErNaTiVe cAsE"),
-            "-r" | "--random" => println!("{}", src_test.to_case(Case::Random)),
-            "-s" | "--leet" => println!("{}", convert_to_leetspeak(src_test)),
-            "-g" | "--angry" => println!("{}", src_test.to_case(Case::Title).replace(' ', ".")),
-            "-t" | "--trueangry" => println!("{}", src_test.to_uppercase().replace(' ', ".")),
-            "-v" | "--reverse" => println!("{}", src_test.chars().rev().collect::<String>()),
-            "-e" | "--emoji" => println!("{}", convert_shortcodes_to_emojis(src_test)),
-            "-d" | "--decode" => {
-                let emoji_vec: Option<Vec<String>> = decode_emojis_to_shortcode(src_test);
-                for items in emoji_vec.iter().flatten() {
-                    println!("{}", items);
-                }
-            }
-            "-f" | "--emojicase" => {
-                let emoji_vec: Vec<String> = emoji_case(src_test);
-                for items in emoji_vec.iter() {
-                    println!("{}", items)
-                }
-            }
-            _ => println!("Invalid case type: {}", set_case),
+#[get("/")]
+async fn index() -> Option<NamedFile> {
+    NamedFile::open("static/index.html").await.ok()
+}
+
+fn state_selector(case: &String, input_text: &String) -> String {
+    println!("input text:   {}", input_text);
+    println!("case:         {}", case);
+
+    let mut converted_text: String = String::from("");
+
+    match case.as_ref() {
+        "uppercase" => converted_text.push_str(&input_text.to_uppercase()),
+        "lowercase" => converted_text.push_str(&input_text.to_lowercase()),
+        "alternative-case" => converted_text.push_str(&input_text.to_case(Case::Alternating)),
+        "random-case" => converted_text.push_str(&input_text.to_case(Case::Random)),
+        "leet-case" => converted_text.push_str(&convert_to_leetspeak(&input_text)),
+        "angry-case" => converted_text.push_str(&input_text.to_case(Case::Title).replace(" ", ".")),
+        "true-angry-case" => converted_text.push_str(&input_text.to_uppercase().replace(" ", ".")),
+        "reverse-case" => converted_text.push_str(&input_text.chars().rev().collect::<String>()),
+        "convert-shortcode-to-emoji" => {
+            converted_text.push_str(&convert_shortcodes_to_emojis(&input_text))
         }
-        Ok(())
+        "convert-emoji-to-shortcode" => {
+            converted_text.push_str(decode_emojis_to_shortcode(&input_text).as_deref().unwrap())
+        }
+        "emoji-case" => converted_text.push_str(&emoji_case(&input_text)),
+        _ => converted_text.push_str("Invalid case"),
     }
+    converted_text
+}
+
+#[launch]
+fn rocket() -> _ {
+    rocket::build()
+        .mount("/", routes![index, api])
+        .mount("/", FileServer::from(relative!("static")))
 }
