@@ -1,6 +1,7 @@
 #[macro_use] extern crate rocket;
 
-use rocket::fs::{FileServer,relative,NamedFile};
+use rocket::form::Form;
+use rocket::fs::{relative, FileServer, NamedFile};
 
 use std::{io,env,process::exit, borrow::Cow, vec};
 use convert_case::{Case, Casing};
@@ -8,8 +9,15 @@ use emojis::Emoji;
 use node_emoji::Replacer;
 use unicode_segmentation::UnicodeSegmentation;
 
-fn convert_to_leetspeak(input_string:&String) -> String {
-    let mut converted_string:String = String::from("");
+// Struct with the form structure that will be sent by the front-end
+#[derive(Debug, FromForm)]
+struct InputText<'r> {
+    pub input_string: &'r str,
+    pub format: String,
+}
+
+fn convert_to_leetspeak(input_string: &String) -> String {
+    let mut converted_string: String = String::from("");
     // iterate over the chars in the input string variable and substitute where necessary
     for chars in input_string.chars() {
         match chars {
@@ -62,8 +70,18 @@ fn decode_emojis_to_shortcode(input_string:&String) -> Option<Vec<String>> {
         let emoji_char: &Emoji = emojis::get(emoji)?;
         emoji_arary.push(format!(":{}:", emoji_char.name().to_string()));
     }
+    // return these shitty vecs as a string to make life easier
+    return Some(emoji_arary.into_iter().collect::<String>());
+}
 
-    return Some(emoji_arary);
+#[post("/api/convert", data = "<form>")]
+async fn api(form: Form<InputText<'_>>) -> String {
+    let input_text: String = form.input_string.to_string();
+    let selected_case: String = form.format.to_owned().to_string();
+
+    let converted_text: String = state_selector(&selected_case, &input_text);
+    println!("Converted text: {}", converted_text);
+    converted_text
 }
 
 #[get("/")]
