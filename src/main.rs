@@ -74,13 +74,27 @@ fn decode_emojis_to_shortcode(input_string: &String) -> String {
     for emoji in input_string.graphemes(false) {
         if emojis::get(emoji).is_none() {
             emoji_arary.push(emoji.to_string());
-        }
-        else {
+        } else {
             emoji_arary.push(emojis::get(emoji).unwrap().to_string())
         }
     }
     // return these shitty vecs as a string to make life easier
     return emoji_arary.into_iter().collect::<String>();
+}
+
+fn space_case(input_string: &String) -> String {
+    // take the input string, then add a space between each character
+    // input string -> i n p u t s t r i n g
+    let mut char_array: Vec<String> = vec![];
+    for characters in input_string.chars() {
+        // if the current character is already a space, ignore it and add it back into the vector
+        if characters == ' ' {
+            char_array.push(characters.to_string());
+        } else {
+            char_array.push(characters.to_string() + " ");
+        }
+    }
+    return char_array.into_iter().collect();
 }
 
 #[post("/api/convert", data = "<form>")]
@@ -89,7 +103,6 @@ async fn api(form: Form<InputText<'_>>) -> String {
     let selected_case: String = form.format.to_owned().to_string();
 
     let converted_text: String = state_selector(&selected_case, &input_text);
-    println!("Converted text: {}", converted_text);
     converted_text
 }
 
@@ -99,9 +112,6 @@ async fn index() -> Option<NamedFile> {
 }
 
 fn state_selector(case: &String, input_text: &String) -> String {
-    println!("input text:   {}", input_text);
-    println!("case:         {}", case);
-
     let mut converted_text: String = String::from("");
 
     match case.as_ref() {
@@ -113,6 +123,7 @@ fn state_selector(case: &String, input_text: &String) -> String {
         "angry-case" => converted_text.push_str(&input_text.to_case(Case::Title).replace(" ", ".")),
         "true-angry-case" => converted_text.push_str(&input_text.to_uppercase().replace(" ", ".")),
         "reverse-case" => converted_text.push_str(&input_text.chars().rev().collect::<String>()),
+        "space-case" => converted_text.push_str(&space_case(&input_text)),
         "convert-shortcode-to-emoji" => {
             converted_text.push_str(&convert_shortcodes_to_emojis(&input_text))
         }
