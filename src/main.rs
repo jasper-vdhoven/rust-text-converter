@@ -5,6 +5,7 @@ use rocket::form::Form;
 use rocket::fs::{relative, FileServer, NamedFile};
 
 use convert_case::{Case, Casing};
+use emojis::Emoji;
 use gh_emoji::Replacer;
 use std::{borrow::Cow, vec};
 use unicode_segmentation::UnicodeSegmentation;
