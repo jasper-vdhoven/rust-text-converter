@@ -74,8 +74,7 @@ fn decode_emojis_to_shortcode(input_string: &String) -> String {
     for emoji in input_string.graphemes(false) {
         if emojis::get(emoji).is_none() {
             emoji_arary.push(emoji.to_string());
-        }
-        else {
+        } else {
             emoji_arary.push(emojis::get(emoji).unwrap().to_string())
         }
     }
@@ -104,7 +103,6 @@ async fn api(form: Form<InputText<'_>>) -> String {
     let selected_case: String = form.format.to_owned().to_string();
 
     let converted_text: String = state_selector(&selected_case, &input_text);
-    println!("Converted text: {}", converted_text);
     converted_text
 }
 
@@ -114,9 +112,6 @@ async fn index() -> Option<NamedFile> {
 }
 
 fn state_selector(case: &String, input_text: &String) -> String {
-    println!("input text:   {}", input_text);
-    println!("case:         {}", case);
-
     let mut converted_text: String = String::from("");
 
     match case.as_ref() {
