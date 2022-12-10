@@ -66,15 +66,22 @@ fn emoji_case(input_string: &String) -> String {
     return emoji_array.into_iter().collect::<String>();
 }
 
-fn decode_emojis_to_shortcode(input_string: &String) -> Option<String> {
+fn decode_emojis_to_shortcode(input_string: &String) -> String {
     let mut emoji_arary: Vec<String> = vec![];
-    // Convert emoji input into short code, this is only for a single emoji (I think)
+    println!("input_string <function>:  {}", input_string);
+    // split the text into Unicode graphemes, then check whether they are a valid emoji
+    // if the value is NOT an emoji, push the input to the vector and move on, otherwise
+    // this will throw a panic, and crash the server
     for emoji in input_string.graphemes(false) {
-        let emoji_char: &Emoji = emojis::get(emoji)?;
-        emoji_arary.push(format!(":{}:", emoji_char.name().to_string()));
+        if emojis::get(emoji).is_none() {
+            emoji_arary.push(emoji.to_string());
+        }
+        else {
+            emoji_arary.push(emojis::get(emoji).unwrap().to_string())
+        }
     }
     // return these shitty vecs as a string to make life easier
-    return Some(emoji_arary.into_iter().collect::<String>());
+    return emoji_arary.into_iter().collect::<String>();
 }
 
 #[post("/api/convert", data = "<form>")]
@@ -111,7 +118,7 @@ fn state_selector(case: &String, input_text: &String) -> String {
             converted_text.push_str(&convert_shortcodes_to_emojis(&input_text))
         }
         "convert-emoji-to-shortcode" => {
-            converted_text.push_str(decode_emojis_to_shortcode(&input_text).as_deref().unwrap())
+            converted_text.push_str(&decode_emojis_to_shortcode(&input_text))
         }
         "emoji-case" => converted_text.push_str(&emoji_case(&input_text)),
         _ => converted_text.push_str("Invalid case"),
