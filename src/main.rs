@@ -3,6 +3,7 @@ extern crate rocket;
 
 use rocket::form::Form;
 use rocket::fs::{relative, FileServer, NamedFile};
+use rocket::Request;
 
 use convert_case::{Case, Casing};
 use gh_emoji::Replacer;
@@ -111,6 +112,16 @@ async fn index() -> Option<NamedFile> {
     NamedFile::open("static/index.html").await.ok()
 }
 
+#[catch(500)]
+fn internal_error() -> &'static str {
+    "Whoops! Looks like we messed up."
+}
+
+#[catch(404)]
+fn not_found(req: &Request) -> String {
+    format!("I couldn't find '{}'. Try something else?", req.uri())
+}
+
 fn state_selector(case: &String, input_text: &String) -> String {
     let mut converted_text: String = String::from("");
 
@@ -141,4 +152,5 @@ fn rocket() -> _ {
     rocket::build()
         .mount("/", routes![index, api])
         .mount("/", FileServer::from(relative!("static")))
+        .register("/", catchers![not_found, internal_error])
 }
