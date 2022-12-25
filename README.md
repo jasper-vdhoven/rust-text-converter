@@ -24,7 +24,7 @@ If you wish to run the text converter as a stand-alone app, running `cargo build
 
 ### Container
 
-The converter right now ships a `Dockerfile` with a builder + prod container to minimise container size. The final container exposes port `8000/TCP` but this can be changed as desired. The general build instructions for the container as as follows:
+The converter right now ships a `Dockerfile` with a builder + prod container to minimise container size. The final container exposes port `8000/TCP` but this can be changed as desired. The general build instructions for the container are as follows:
 
 1. Build the container with the following command utilising either [Podman.io](https://podman.io/) or [Docker.com](https://www.docker.com/):
     ```
