@@ -57,7 +57,7 @@ fn emoji_case(input_string: &String) -> String {
         if emoji_char.is_none() {
             emoji_array.push(words.to_string() + " ");
         }
-        // Else, pus the translated emoji equivalent to the vec
+        // Else, put the translated emoji equivalent to the vec
         else {
             emoji_array.push(emoji_char.unwrap().to_string() + " ");
         }
@@ -74,7 +74,7 @@ fn decode_emojis_to_shortcode(input_string: &String) -> Option<String>{
         if emojis::get(emoji).is_none() {
             emoji_arary.push(emoji.to_string());
         } else {
-            let wave = emojis::get("👋")?;
+            let wave = emojis::get(emoji)?;
             let shortcode = format!(":{}:", wave.shortcode()?);
             // emoji_arary.push(emojis::get(emoji).unwrap().to_string())
             emoji_arary.push(shortcode.to_string());
