@@ -16,5 +16,25 @@ The Rust binary acts as a stand-alone service supplying the web-server that disp
 - [gh_emoji](https://crates.io/crates/gh-emoji)
 - [unicode-segmentation](https://crates.io/crates/unicode-segmentation)
 
+## Build instructions
+
+### Stand-alone
+
+If you wish to run the text converter as a stand-alone app, running `cargo build --release` // `cargo install` will suffice.
+
+### Container
+
+The converter right now ships a `Dockerfile` with a builder + prod container to minimise container size. The final container exposes port `8000/TCP` but this can be changed as desired. The general build instructions for the container as as follows:
+
+1. Build the container with the following command utilising either [Podman.io](https://podman.io/) or [Docker.com](https://www.docker.com/):
+    ```
+    podman build -t rust-text-converter:latest -f Dockerfile .
+    ```
+2. Then run the container with the following command:
+    ```
+    podman run -it --rm -p 8000:8000 rust-text-converter
+    ```
+
+The app can then be tucked behind a reverse proxy if desired, or directly exposed to the internet.
 
 For anyone that finds this and found it useful/funny, feel free to make an issue or PR for things you'd wish changed/improved upon, this is one of the first actual Rust apps I've written with Rust.
